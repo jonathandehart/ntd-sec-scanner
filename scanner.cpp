@@ -50,7 +50,7 @@ public:
 
     SourceManager &SM = *Result.SourceManager;
     SourceLocation Loc = Call->getBeginLoc();
-    if (SM.isInSystemHeader(Loc)) {return};
+    if (SM.isInSystemHeader(Loc)) {return;}
 
     CharSourceRange FuncRange = CharSourceRange::getTokenRange(Func->getSourceRange());
     llvm::StringRef FuncCode = Lexer::getSourceText(FuncRange, SM, Result.Context->getLangOpts());
@@ -78,7 +78,7 @@ int main(int argc, const char **argv) {
     CommonOptionsParser &OptionsParser = ExpectedParser.get();
     ClangTool Tool(OptionsParser.getCompilations(), OptionsParser.getSourcePathList());
 
-    SecurityMatchHandler Handler;
+    UnsafeCallHandler Handler;
     MatchFinder Finder;
     Finder.addMatcher(UnsafeCallMatcher, &Handler);
     Finder.addMatcher(MallocOverflowMatcher, &Handler);
