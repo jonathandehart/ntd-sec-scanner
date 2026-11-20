@@ -1,17 +1,17 @@
 ```markdown
 # AI-Assisted C/C++ Static Vulnerability Scanner
 
-A compiler-based static analysis tool built with **Clang/LLVM LibTooling** and **Python** that detects memory-safety vulnerabilities in C/C++ Abstract Syntax Trees (ASTs), extracts full enclosing function contexts, and pipes findings to an LLM for false-positive triage and automated remediation.
+A compiler-based static analysis tool built with Clang/LLVM LibTooling and Python that detects memory-safety vulnerabilities in C/C++ Abstract Syntax Trees (ASTs), extracts full enclosing function contexts, and pipes findings to an LLM for triage and automated remediation.
 
 ## Architecture
 
-```text
 [C/C++ Source] ──▶ [Clang LibTooling AST Scanner] ──▶ [Structured JSON] ──▶ [Python LLM Triage] ──▶ [Verdict + Patch]
-```
 
-1. **AST Static Analysis (`scanner.cpp`):** Uses Clang's `ASTMatchers` to traverse C/C++ syntax trees rather than brittle regex matching.
-2. **Context Extraction:** Climbs the AST (`hasAncestor`) to locate the enclosing `FunctionDecl` and slices the exact source text via `clang::Lexer`, serializing findings with `llvm::json`.
-3. **AI Triage & Patching (`triage.py`):** Evaluates surrounding buffer sizes and integer bounds via local Ollama or OpenAI-compatible APIs to separate true vulnerabilities from safe false positives and generate memory-safe C++ fixes.
+1. AST Static Analysis (scanner.cpp): Uses Clang's ASTMatchers to traverse C/C++ syntax trees rather than brittle regex matching.
+
+2. Context Extraction: Climbs the AST (hasAncestor) to locate the enclosing FunctionDecl and slices the exact source text via clang::Lexer, serializing findings with llvm::json.
+
+3. AI Triage & Patching (triage.py): Evaluates surrounding buffer sizes and integer bounds via local Ollama or OpenAI-compatible APIs to separate true vulnerabilities from safe false positives and generate memory-safe C++ fixes.
 
 ## Supported Security Rules
 
@@ -39,7 +39,7 @@ make -j$(sysctl -n hw.ncpu)
 ```
 
 ### 2. Run the Full AI Triage Pipeline
-Supports local [Ollama](https://ollama.com) (`llama3.2` by default) or OpenAI (`export OPENAI_API_KEY=...`):
+Supports local [Ollama](https://ollama.com) (`llama3.2` by default) or Gemini (`export GEMINI_API_KEY=...`):
 
 ```bash
 ./build/sec-scanner vulnerable_test.cpp -- | python3 triage.py
